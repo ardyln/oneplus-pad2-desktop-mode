@@ -1,0 +1,34 @@
+11-02 09:17:29.026 I/SDM     ( 1572): ResourceImpl::IsIWENeeded: iwe not supported with default strategy
+11-02 09:17:29.027 E/SDM     ( 1572): DRMAtomicReq::Validate: drmModeAtomicCommit failed with error 22 (Invalid argument).
+11-02 09:17:29.027 E/SDM     ( 1572): HWDeviceDRM::Validate: failed with error -22 for Peripheral
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: HWLayers Stack: layer_count: 1, app_layer_count: 40, gpu_target_index: 40
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: LayerStackFlags = 0x18884611,  blend_cs = {primaries = 1, transfer = 1}
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: left_frame_roi: x = 0, y = 0, w = 3000, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: right_frame_roi: x = 0, y = 0, w = 0 h = 0
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: ========================= HW_layer: 0 =========================
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: src_width = 3008, src_height = 2128, src_format = 12, src_LayerBufferFlags = 0x0
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: pipe = 1, pipe_id = 160, z_order = 0, flags = 0x1
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: src_rect: x = 0, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: dst_rect: x = 0, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: excl_rect: left = 0, top = 0, right = 0, bottom = 0
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: pipe = 2, pipe_id = 156, z_order = 0, flags = 0x1
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: src_rect: x = 750, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: dst_rect: x = 750, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: excl_rect: left = 0, top = 0, right = 0, bottom = 0
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: pipe = 3, pipe_id = 152, z_order = 0, flags = 0x1
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: src_rect: x = 1500, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: dst_rect: x = 1500, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: excl_rect: left = 0, top = 0, right = 0, bottom = 0
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: pipe = 4, pipe_id = 148, z_order = 0, flags = 0x1
+11-02 09:17:29.027 W/SurfaceFlinger( 1692): Ignoring duplicate VSYNC event from HWC for display 4630946941668558211 (t=41569456271000)
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: src_rect: x = 2250, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: dst_rect: x = 2250, y = 0, w = 750, h = 2120
+11-02 09:17:29.027 I/SDM     ( 1572): HWDeviceDRM::DumpHWLayers: excl_rect: left = 0, top = 0, right = 0, bottom = 0
+11-02 09:17:29.027 I/SDM     ( 1572): ResourceImpl::IsIWENeeded: iwe not supported with default strategy
+11-02 09:17:29.027 E/SDM     ( 1572): CompManager::Prepare: Composition strategies exhausted for display = 69-0. (first frame = False)
+11-02 09:17:29.027 E/SDM     ( 1572): DisplayBase::CommitOrPrepare: Prepare failed: 1
+11-02 09:17:29.027 W/SDM     ( 1572): HWCDisplay::HandlePrepareError: Prepare failed. Error = 1
+11-02 09:17:29.027 W/SDM     ( 1572): executeValidateDisplay: error: BadDisplay
+11-02 09:17:29.027 E/SurfaceFlinger( 1692): getDeviceCompositionChanges: validate failed for display 4630946941668558211: BAD_DISPLAY (2)
+11-02 09:17:29.027 E/SurfaceFlinger( 1692): chooseCompositionStrategy failed for : -75 (Value too large for defined data type)
+11-02 09:17:29.029 W/SDM     ( 1572): executePresentDisplay: error: NotValidated

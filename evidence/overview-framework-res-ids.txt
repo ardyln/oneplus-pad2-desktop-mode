@@ -1,0 +1,5 @@
+resource 0x0111006e bool/config_canInternalDisplayHostDesktops
+resource 0x011101f2 bool/config_hideDisplayCutoutWithDisplayArea
+resource 0x011101f3 bool/config_hideNavBarForKeyboard
+resource 0x01110200 bool/config_isDesktopModeDevOptionSupported
+resource 0x01110201 bool/config_isDesktopModeSupported

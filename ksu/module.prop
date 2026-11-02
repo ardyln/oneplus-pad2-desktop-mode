@@ -1,0 +1,6 @@
+id=zpos4_test
+name=msm_drm quad-pipe zpos test
+version=test1
+versionCode=1
+author=ardyln
+description=Test fix for desktop-mode tearing on PixelOS caihong: lets msm_drm accept 4 planes per blend stage (kprobe on sde_crtc_atomic_check+0xbc0). Remove to restore stock behaviour.

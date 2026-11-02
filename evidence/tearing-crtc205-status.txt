@@ -1,0 +1,8 @@
+crtc:205 width:3000 height:2120
+
+	mixer:0 ctl:0 width:750 height:2120
+	mixer:1 ctl:0 width:750 height:2120
+	mixer:2 ctl:0 width:750 height:2120
+	mixer:3 ctl:0 width:750 height:2120
+
+	plane:148 stage:1 rotation:1

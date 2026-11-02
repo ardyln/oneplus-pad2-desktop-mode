@@ -1,0 +1,6 @@
+[41483.264493] [drm:_sde_crtc_atomic_check:6408] [sde error]crtc205 failed pstate check -22
+[41483.272677] [drm:_sde_crtc_check_zpos:6199] [sde error]> 2 planes @ stage 0
+[41483.272686] [drm:_sde_crtc_atomic_check:6408] [sde error]crtc205 failed pstate check -22
+[41483.280892] [drm:_sde_crtc_check_zpos:6199] [sde error]> 2 planes @ stage 0
+[41483.280901] [drm:_sde_crtc_atomic_check:6408] [sde error]crtc205 failed pstate check -22
+[41483.289360] [drm:_sde_crtc_check_zpos:6199] [sde error]> 2 planes @ stage 0
