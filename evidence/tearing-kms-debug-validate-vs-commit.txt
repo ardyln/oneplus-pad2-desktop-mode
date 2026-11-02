@@ -1,0 +1,40 @@
+# drm.debug=0x5 (CORE|KMS), 0.7 s windows, 13 desk windows, Chrome window dragged.
+# Filtered to atomic ioctls, crtc checks, connector lookup, layout split, fences and kickoffs.
+# pid/dev fields removed. binder:1581_3 = the composer's validate call (no fences set; TEST_ONLY by
+# inference from that), vendor.qti.hard = the real commit (sets output_fence, followed by a kickoff).
+
+## A. Without zpos4 (stock msm_drm): only validate calls, all rejected, no commit, no kickoff
+[ 1562.347846] [drm:drm_ioctl] comm="binder:1581_3" DRM_IOCTL_MODE_ATOMIC
+[ 1562.378524] [drm:sde_crtc_atomic_check [msm_drm]] crtc205: check
+[ 1562.379409] [drm:sde_rm_topology_is_group [msm_drm]] DSI-1 invalid connector state
+[ 1562.383347] [drm:_sde_crtc_check_zpos:6199] [sde error]> 2 planes @ stage 0
+[ 1562.383357] [drm:_sde_crtc_atomic_check:6408] [sde error]crtc205 failed pstate check -22
+[ 1562.385257] [drm:drm_ioctl] comm="binder:1581_3", ret=-22
+  [...] whole window: 35 ATOMIC ioctls, all from binder:1581_3; 34 ret=-22; 0 output_fence; 0 kickoffs
+
+## B. With zpos4 loaded: validate (no fence, no connector) then commit (fence, connector, L/R split)
+[ 2223.055147] [drm:drm_ioctl] comm="binder:1581_3" DRM_IOCTL_MODE_ATOMIC
+[ 2223.076117] [drm:sde_encoder_kickoff [msm_drm]] enc68 
+[ 2223.103855] [drm:sde_crtc_atomic_check [msm_drm]] crtc205: check
+[ 2223.104522] [drm:sde_rm_topology_is_group [msm_drm]] DSI-1 invalid connector state
+[ 2223.113305] [drm:drm_ioctl] comm="vendor.qti.hard" DRM_IOCTL_MODE_ATOMIC
+[ 2223.121214] [drm:sde_crtc_atomic_set_property [msm_drm]] crtc-0: output_fence[207] <= <ptr>
+[ 2223.131276] [drm:sde_crtc_atomic_check [msm_drm]] crtc205: check
+[ 2223.131659] [drm:sde_crtc_atomic_check [msm_drm]] plane148 updated: crtc_x=750 layout=2
+[ 2223.131788] [drm:sde_crtc_atomic_check [msm_drm]] plane152 updated: crtc_x=0 layout=2
+[ 2223.131914] [drm:sde_crtc_atomic_check [msm_drm]] plane156 updated: crtc_x=750 layout=1
+[ 2223.132042] [drm:sde_crtc_atomic_check [msm_drm]] plane160 updated: crtc_x=0 layout=1
+[ 2223.136650] [drm:drm_ioctl] comm="binder:1581_3" DRM_IOCTL_MODE_ATOMIC
+[ 2223.151660] [drm:sde_encoder_kickoff [msm_drm]] enc68 
+[ 2223.159045] [drm:sde_crtc_atomic_check [msm_drm]] crtc205: check
+[ 2223.159410] [drm:sde_rm_topology_is_group [msm_drm]] DSI-1 invalid connector state
+[ 2223.166296] [drm:drm_ioctl] comm="vendor.qti.hard" DRM_IOCTL_MODE_ATOMIC
+[ 2223.173039] [drm:sde_crtc_atomic_set_property [msm_drm]] crtc-0: output_fence[207] <= <ptr>
+[ 2223.183687] [drm:sde_crtc_atomic_check [msm_drm]] crtc205: check
+[ 2223.184093] [drm:sde_crtc_atomic_check [msm_drm]] plane148 updated: crtc_x=750 layout=2
+[ 2223.184224] [drm:sde_crtc_atomic_check [msm_drm]] plane152 updated: crtc_x=0 layout=2
+[ 2223.184358] [drm:sde_crtc_atomic_check [msm_drm]] plane156 updated: crtc_x=750 layout=1
+[ 2223.184494] [drm:sde_crtc_atomic_check [msm_drm]] plane160 updated: crtc_x=0 layout=1
+[ 2223.190428] [drm:drm_ioctl] comm="binder:1581_3" DRM_IOCTL_MODE_ATOMIC
+[ 2223.204175] [drm:sde_encoder_kickoff [msm_drm]] enc68 
+  [...] whole window: 12 validate checks, all 'invalid connector state'; 12 commit checks, all with output_fence and layout split; 0 rejections

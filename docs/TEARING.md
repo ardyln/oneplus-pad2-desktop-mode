@@ -88,15 +88,42 @@ OnePlus Pad 2, OxygenOS 16 source
 With 4 mixers, OnePlus's driver allows **4** planes per blend stage; LineageOS's
 allows **2**. The OOS16 composer relies on the former.
 
-Most frames still pass on the LineageOS driver because
-`_sde_crtc_check_plane_layout()` normally splits quad-pipe planes into
+### Why only the validate step fails (traced)
+
+`_sde_crtc_check_plane_layout()` splits quad-pipe planes into
 `SDE_LAYOUT_LEFT`/`SDE_LAYOUT_RIGHT`, and `_sde_crtc_check_zpos()` counts each
 half separately (2 + 2). That split only happens when
 `sde_rm_topology_is_group(…, SDE_RM_TOPOLOGY_GROUP_QUADPIPE)` returns true, which
-reads the topology from `drm_atomic_get_new_connector_state()`. **My reading of
-the code (not traced)** is that commits which don't carry the connector state
-leave all four strips at `SDE_LAYOUT_NONE`, so they are counted as one group of
-4 and rejected.
+reads the topology from `drm_atomic_get_new_connector_state()`. Neither driver
+adds the connector to the atomic state itself, so it is only there when the
+composer sets a connector property in that request. Both functions are
+identical in the LineageOS and OOS16 trees.
+
+A `drm.debug=0x5` trace on the busy desk (13 windows, window being dragged)
+shows two kinds of atomic request per frame
+([`evidence/tearing-kms-debug-validate-vs-commit.txt`](../evidence/tearing-kms-debug-validate-vs-commit.txt)):
+
+| Request | From thread | Fences set | Connector state | Layout of the 4 strips |
+|---|---|---|---|---|
+| Validate | `binder:1581_3` | none | missing (`DSI-1 invalid connector state`) | all `SDE_LAYOUT_NONE`: 4 at one stage |
+| Commit | `vendor.qti.hard` | `output_fence` | present | 2 left + 2 right |
+
+With the fix loaded this held for all of them: 12 validate checks without the connector, 12
+commit checks with it. Without the fix, the same 0.7 s window has 35 requests,
+**all** validate calls from `binder:1581_3`, 34 of them returning `-22`, and
+**no** commit and no encoder kickoff at all. So the stock driver rejects the
+composer's validate step (which, by the missing fences, is the test-only request) because it
+counts the four strips as one group of 4. The composer then gives up on the
+frame. The real commit, which would have been split 2 + 2 and passed, is never
+sent.
+
+This also bounds what the fix changes: in the traced frames the real commits
+never have more than 2 planes per stage per half, so the modified comparison
+only changes the verdict on the validate request.
+
+An earlier home-screen trace seemed to show the connector state present "when
+it works". Those requests turned out to be refresh-rate mode switches (120 ↔ 30
+fps), which bring the connector in themselves, so they weren't a fair comparison.
 
 ### Other differences in the same file
 
