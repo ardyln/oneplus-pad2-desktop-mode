@@ -1,0 +1,6 @@
+id=launcher_resid_fix
+name=Pixel Launcher resource ID fix for PixelOS
+version=test1
+versionCode=3
+author=ardyln
+description=Patches the Pixel Launcher on this device so its hard-coded framework resource IDs match PixelOS (fixes the empty Desktop card in Overview). Applied at boot by bind mount; nothing on flash is changed.

@@ -6,12 +6,12 @@ Two desktop-mode bugs on the OnePlus Pad 2 (`caihong`) running PixelOS 17
 | Bug | Cause | Status |
 |---|---|---|
 | **Tearing/stutter with many windows**, worst with video playing | The kernel display driver (LineageOS sm8650-modules, imported from OnePlus 12 OOS 15) allows 2 planes per blend stage. The Pad 2's OOS 16 driver allows 4 on its quad-pipe panel, and the OOS 16 vendor compositor relies on that. Every frame gets rejected (`> 2 planes @ stage 0`). | One-line kernel fix identified; verified with a runtime test module |
-| **Gray, empty "Desktop" card in Overview**; "No recent items" when the desk is in the background | The prebuilt Pixel Launcher reads framework-internal bool resources by numeric ID. On PixelOS those IDs are shifted by 14, so it reads `config_hideNavBarForKeyboard` (false) instead of `config_isDesktopModeSupported` (true) and concludes the device has no desktop mode | Cause identified; workaround verified |
+| **Gray, empty "Desktop" card in Overview**; "No recent items" when the desk is in the background | The prebuilt Pixel Launcher reads framework-internal bool resources by numeric ID. PixelOS's own added resources (`custom_symbols.xml`) shift those IDs, so it reads `config_hideNavBarForKeyboard` (false) instead of `config_isDesktopModeSupported` (true) and concludes the device has no desktop mode. 6 IDs are shifted in total | Fixed and verified with a module that patches the launcher on the device |
 
 Full write-ups:
 
 - [docs/TEARING.md](docs/TEARING.md): kernel logs, compositor logs, source comparison, test module, measurements.
-- [docs/OVERVIEW.md](docs/OVERVIEW.md): SurfaceFlinger layers, launcher recents state, resource ID table, workaround.
+- [docs/OVERVIEW.md](docs/OVERVIEW.md): SurfaceFlinger layers, launcher recents state, all shifted resource IDs, the patching module, workaround.
 
 Log excerpts are in [`evidence/`](evidence).
 
@@ -49,14 +49,47 @@ kernel (`638ecc425319`) and sm8650-modules (`ec04e4f8d5c9`) trees, clang/lld 22,
 flex, bison, pahole and libelf. The script reads the running config from the
 tablet and checks `module_layout`'s CRC against the device (`0xea759d7f`).
 
-## Overview workaround
+## Overview fix (KernelSU/Magisk module)
+
+[`launcher/`](launcher) patches **your device's own** Pixel Launcher when you
+install it. The zip contains only the patcher and an ID table, nothing from
+Google. It rewrites the 6 framework resource IDs the launcher reads at the wrong
+place (9 instructions):
+
+- desktop-mode support, which fixes the Overview card;
+- the app-launch blur, on now, as Google intended;
+- the search entry points default;
+- the taskbar's IME-switcher icon.
+
+The new IDs are looked up by name on the device. The APK keeps its size and its
+original signing block. Android doesn't verify APKs on system partitions at boot,
+so the launcher keeps Google's signature, and the Google app's −1 feed keeps
+working. At boot the patched copy is bind-mounted over the stock APK; nothing on
+flash changes. Details and verification: [docs/OVERVIEW.md](docs/OVERVIEW.md#fix-patch-the-launchers-ids-kernelsumagisk-module).
+
+- **Install:** download `launcher_resid_fix.zip` from the [releases](../../releases),
+  install it in KernelSU, and reboot. If you used the workaround below, delete the
+  prop first: `adb shell su -c 'resetprop -p --delete persist.wm.debug.desktop_mode_enforce_device_restrictions'`.
+- **After a system update:** the module only applies its patch while the stock
+  launcher and `framework-res.apk` are unchanged. Otherwise it does nothing, and
+  its description says so. Press the module's Action button to patch again, then reboot.
+- **Supported:** only launcher APKs listed in [`launcher/ids.txt`](launcher/ids.txt)
+  (currently the one in PixelOS caihong `17.0-20261022-1226`). For any other APK
+  the installer stops without changing anything. A new launcher needs a new
+  table; [`tools/remap-resource-ids.py`](tools/remap-resource-ids.py) shows how
+  this one was derived.
+- **Remove:** uninstall `launcher_resid_fix` in KernelSU, then reboot.
+- **Build:** [`tools/build-launcher-fix.sh`](tools/build-launcher-fix.sh) (a JDK and d8).
+
+## Overview workaround (without the module)
 
 ```
 adb shell su -c 'setprop persist.wm.debug.desktop_mode_enforce_device_restrictions false'
 adb shell am force-stop com.google.android.apps.nexuslauncher
 ```
 
-This is a debug switch that also lifts Shell's desktop-mode device restrictions.
+This is a debug switch that also lifts Shell's desktop-mode device restrictions,
+and it fixes only the desktop-mode check, not the other shifted IDs.
 See [docs/OVERVIEW.md](docs/OVERVIEW.md).
 
 ## Binaries examined
@@ -69,8 +102,8 @@ See [docs/OVERVIEW.md](docs/OVERVIEW.md).
 
 ## License
 
-Write-up, scripts and KernelSU files: GPL-3.0-or-later ([LICENSE](LICENSE)).
+Write-up, scripts, the launcher patcher and KernelSU files: GPL-3.0-or-later ([LICENSE](LICENSE)).
 The kernel module [`module/zpos4.c`](module/zpos4.c) is GPL-2.0, as required
 for code linked into the Linux kernel ([module/COPYING](module/COPYING)).
 
-The investigation, test module and write-up were done with an AI assistant (Claude), under the author's direction, and verified on the author's tablet.
+The investigation, modules and write-up were done with an AI assistant (Claude), under the author's direction, and verified on the author's tablet.

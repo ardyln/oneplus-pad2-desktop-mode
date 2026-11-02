@@ -1,0 +1,13 @@
+# Framework resource IDs that Pixel Launcher hard-codes from Google's build, and
+# the resource each one means. The patcher looks up the new ID by name on the
+# device. Format: <Google ID> <type> <name> <expected uses>
+# How each entry was derived and checked: docs/OVERVIEW.md, "The fix".
+
+# NexusLauncherReleaseTablet.apk, PixelOS caihong 17.0-20261022-1226
+apk 91a82304b1ead531f3109d00dff990000d7f12cf5215c7906762e44d2d883ad1
+0x011101f3 bool     config_isDesktopModeSupported                  2
+0x011101f2 bool     config_isDesktopModeDevOptionSupported         2
+0x011101c5 bool     config_enterDesktopByDefaultOnFreeformDisplay  2
+0x0111017c bool     config_enableAppLaunchBlur                     1
+0x01110263 bool     config_searchAllEntrypointsEnabledDefault      1
+0x01080467 drawable ic_ime_switcher                                1
